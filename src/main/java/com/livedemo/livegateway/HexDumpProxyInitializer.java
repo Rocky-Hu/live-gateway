@@ -1,7 +1,10 @@
 package com.livedemo.livegateway;
 
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
@@ -17,8 +20,12 @@ public class HexDumpProxyInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     public void initChannel(SocketChannel ch) {
-        ch.pipeline().addLast(
+        ChannelPipeline pipeline = ch.pipeline();
+        pipeline.addLast(new HttpRequestDecoder());
+        pipeline.addLast(new HttpServerHandler());
+//        pipeline.addLast(new HexDumpProxyFrontendHandler(remoteHost, remotePort));
+//        ch.pipeline().addLast(
 //                new LoggingHandler(LogLevel.INFO),
-                new HexDumpProxyFrontendHandler(remoteHost, remotePort));
+//                new HexDumpProxyFrontendHandler(remoteHost, remotePort));
     }
 }
