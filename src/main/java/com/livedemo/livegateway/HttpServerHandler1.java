@@ -5,10 +5,11 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 
-public class HttpServerHandler extends ChannelInboundHandlerAdapter {
+public class HttpServerHandler1 extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("HttpServerHandler1...channelActive");
         ctx.fireChannelActive();
     }
 
