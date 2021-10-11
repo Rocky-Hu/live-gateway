@@ -4,9 +4,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 
 public class HexDumpProxyInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -22,10 +20,8 @@ public class HexDumpProxyInitializer extends ChannelInitializer<SocketChannel> {
     public void initChannel(SocketChannel ch) {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast(new HttpRequestDecoder());
-        pipeline.addLast(new HttpServerHandler());
-//        pipeline.addLast(new HexDumpProxyFrontendHandler(remoteHost, remotePort));
-//        ch.pipeline().addLast(
-//                new LoggingHandler(LogLevel.INFO),
-//                new HexDumpProxyFrontendHandler(remoteHost, remotePort));
+        pipeline.addLast(new HttpResponseEncoder());
+        pipeline.addLast(new ProxyAuthenticationHandler());
+        pipeline.addLast(new HexDumpProxyFrontendHandler(remoteHost, remotePort));
     }
 }

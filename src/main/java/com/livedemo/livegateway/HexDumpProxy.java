@@ -26,7 +26,7 @@ public final class HexDumpProxy {
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new HexDumpProxyInitializer(REMOTE_HOST, REMOTE_PORT))
-                    .childOption(ChannelOption.AUTO_READ, false)
+//                    .childOption(ChannelOption.AUTO_READ, false)
                     .bind(LOCAL_PORT).sync().channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();

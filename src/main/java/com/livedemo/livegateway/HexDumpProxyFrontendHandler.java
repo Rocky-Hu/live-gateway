@@ -3,6 +3,10 @@ package com.livedemo.livegateway;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 
 public class HexDumpProxyFrontendHandler extends ChannelInboundHandlerAdapter {
 
@@ -26,6 +30,7 @@ public class HexDumpProxyFrontendHandler extends ChannelInboundHandlerAdapter {
         Bootstrap b = new Bootstrap();
         b.group(inboundChannel.eventLoop())
                 .channel(ctx.channel().getClass())
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .handler(new HexDumpProxyBackendHandler(inboundChannel))
                 .option(ChannelOption.AUTO_READ, false);
         ChannelFuture f = b.connect(remoteHost, remotePort);
@@ -38,7 +43,9 @@ public class HexDumpProxyFrontendHandler extends ChannelInboundHandlerAdapter {
                     inboundChannel.read();
                 } else {
                     // Close the connection if the connection attempt has failed.
-                    inboundChannel.close();
+                    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_0, HttpResponseStatus.BAD_GATEWAY);
+                    inboundChannel.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+//                    inboundChannel.close();
                 }
             }
         });
