@@ -3,11 +3,10 @@ package com.livedemo.livegateway;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class HexDumpProxyFrontendHandler extends ChannelInboundHandlerAdapter {
 
     private final String remoteHost;
@@ -24,6 +23,9 @@ public class HexDumpProxyFrontendHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+
+//        log.debug("Client {} connected.", ctx.channel().remoteAddress());
+
         final Channel inboundChannel = ctx.channel();
 
         // Start the connection attempt.
@@ -41,11 +43,12 @@ public class HexDumpProxyFrontendHandler extends ChannelInboundHandlerAdapter {
                 if (future.isSuccess()) {
                     // connection complete start to read first data
                     inboundChannel.read();
+//                    inboundChannel.pipeline().addFirst("httpRequestDecoder", new HttpRequestDecoder());
                 } else {
                     // Close the connection if the connection attempt has failed.
-                    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_0, HttpResponseStatus.BAD_GATEWAY);
-                    inboundChannel.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-//                    inboundChannel.close();
+//                    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_0, HttpResponseStatus.BAD_GATEWAY);
+//                    inboundChannel.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+                    inboundChannel.close();
                 }
             }
         });

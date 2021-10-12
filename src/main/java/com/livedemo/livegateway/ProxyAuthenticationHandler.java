@@ -14,24 +14,30 @@ public class ProxyAuthenticationHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        // ctx.fireChannelActive();
+        log.debug("Client {} connected.", ctx.channel().remoteAddress());
+        ctx.fireChannelActive();
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof DefaultHttpRequest) {
-            DefaultHttpRequest httpRequest = (DefaultHttpRequest) msg;
-            log.debug("Http Request Received");
-            HttpHeaders headers = httpRequest.headers();
-            String cookies = headers.get("Cookie");
-            log.debug("Cookies: {}", cookies);
-            if (StringUtils.isBlank(cookies)) {
-                FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_0, HttpResponseStatus.FORBIDDEN);
-                ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-            } else {
-                ctx.channel().config().setAutoRead(false);
-                ctx.fireChannelActive();
-            }
+//            DefaultHttpRequest httpRequest = (DefaultHttpRequest) msg;
+//            log.debug("Http Request Received");
+//            HttpHeaders headers = httpRequest.headers();
+//            String cookies = headers.get("Cookie");
+//            log.debug("Cookies: {}", cookies);
+//            if (StringUtils.isBlank(cookies)) {
+//                ctx.pipeline().addFirst("httpResponseEncoder", new HttpResponseEncoder());
+//                FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_0, HttpResponseStatus.FORBIDDEN);
+//                ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+//            } else {
+//                ctx.fireChannelRead(msg);
+//            }
+
+            ctx.pipeline().remove("httpRequestDecoder");
+            ctx.fireChannelRead(msg);
         }
+
+        ctx.fireChannelRead(msg);
     }
 }
