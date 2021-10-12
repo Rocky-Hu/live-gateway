@@ -1,12 +1,14 @@
-package com.livedemo.livegateway;
+package com.live.gateway;
 
 import io.netty.channel.*;
+import lombok.extern.slf4j.Slf4j;
 
-public class HexDumpProxyBackendHandler extends ChannelInboundHandlerAdapter {
+@Slf4j
+public class ProxyBackendHandler extends ChannelInboundHandlerAdapter {
 
     private final Channel inboundChannel;
 
-    public HexDumpProxyBackendHandler(Channel inboundChannel) {
+    public ProxyBackendHandler(Channel inboundChannel) {
         this.inboundChannel = inboundChannel;
     }
 
@@ -31,12 +33,12 @@ public class HexDumpProxyBackendHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        HexDumpProxyFrontendHandler.closeOnFlush(inboundChannel);
+        ProxyFrontendHandler.closeOnFlush(inboundChannel);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
-        HexDumpProxyFrontendHandler.closeOnFlush(ctx.channel());
+        log.error("{}", cause);
+        ProxyFrontendHandler.closeOnFlush(ctx.channel());
     }
 }
