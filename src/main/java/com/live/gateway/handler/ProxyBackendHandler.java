@@ -1,4 +1,4 @@
-package com.live.gateway;
+package com.live.gateway.handler;
 
 import io.netty.channel.*;
 import lombok.extern.slf4j.Slf4j;

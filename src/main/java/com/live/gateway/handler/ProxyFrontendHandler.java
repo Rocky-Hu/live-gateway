@@ -1,5 +1,6 @@
-package com.live.gateway;
+package com.live.gateway.handler;
 
+import com.live.gateway.remoting.RemotingClientBootstrap;
 import com.live.gateway.model.Address;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -29,7 +30,7 @@ public class ProxyFrontendHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         final Channel inboundChannel = ctx.channel();
-        ChannelFuture f = ProxyBootstrap.connect(ctx, new Address(remoteHost, remotePort));
+        ChannelFuture f = RemotingClientBootstrap.connect(ctx, new Address(remoteHost, remotePort));
         outboundChannel = f.channel();
         outboundChannel.pipeline().addLast(new HttpRequestEncoder());
         f.addListener(new ChannelFutureListener() {

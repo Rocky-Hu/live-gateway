@@ -1,5 +1,7 @@
-package com.live.gateway;
+package com.live.gateway.initializer;
 
+import com.live.gateway.handler.ProxyFrontendAuthHandler;
+import com.live.gateway.handler.ProxyFrontendHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

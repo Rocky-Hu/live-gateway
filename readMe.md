@@ -13,4 +13,10 @@ https://beautyboss.farbox.com/post/netty/nettylian-jie-chao-shi-fen-xi
 
 http://112.91.118.47:8082/live?app=mylive&stream=IPC-HDW1320C
 
+502 Bad Gateway(网关错误)
+含义：服务器作为网关或者代理时,为了完成请求访问下一个服务器,但该服务器返回了非法的应答.
+
+解释: 作为网关或者代理工作的服务器尝试执行请求时,从上游服务器接收到无效的响应. 502 错误通常不是客户端能够修复的,而是需要由途径的Web服务器或者代理服务器对其进行修复.
+
+使用场景： web 服务重启的时候. 举个例子：启动nginx,不启动php-fpm, 这时候 nginx服务器就会返回 502. 原因：nginx无法连接php-fpm,在达到nginx最大的超时时间的时候,nginx还没有获取到响应就会返回502
 

@@ -1,5 +1,6 @@
-package com.live.gateway;
+package com.live.gateway.remoting;
 
+import com.live.gateway.handler.ProxyBackendHandler;
 import com.live.gateway.model.Address;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -12,7 +13,7 @@ import io.netty.channel.ChannelOption;
  * @Description
  * @Date 创建于 2021/10/11 13:57
  */
-public class ProxyBootstrap {
+public class RemotingClientBootstrap {
 
     public static ChannelFuture connect(ChannelHandlerContext ctx, Address address) {
         final Channel inboundChannel = ctx.channel();
