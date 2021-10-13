@@ -6,6 +6,11 @@ import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @Author 胡学汪
+ * @Description
+ * @Date 创建于 2021/10/11 13:57
+ */
 @Slf4j
 public class ProxyFrontendHandler extends ChannelInboundHandlerAdapter {
 
@@ -35,9 +40,10 @@ public class ProxyFrontendHandler extends ChannelInboundHandlerAdapter {
                     inboundChannel.read();
                 } else {
                     // Close the connection if the connection attempt has failed.
+                    log.error("Connect to remote server failed: inboundChannel->{}, outboundChannel-> {}, cause-> {}", inboundChannel, outboundChannel, future.cause());
+                    ctx.pipeline().addBefore("proxyFrontendHandler", "httpResponseEncoder",  new HttpResponseEncoder());
                     FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_0, HttpResponseStatus.BAD_GATEWAY);
                     inboundChannel.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-                    // inboundChannel.close();
                 }
             }
         });
@@ -53,6 +59,7 @@ public class ProxyFrontendHandler extends ChannelInboundHandlerAdapter {
                         // was able to flush out data, start to read the next chunk
                         ctx.channel().read();
                     } else {
+                        log.error("OutboundChannel writeAndFlush failed: outboundChannel-> {}, cause-> {}", outboundChannel, future.cause());
                         future.channel().close();
                     }
                 }

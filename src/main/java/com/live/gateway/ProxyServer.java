@@ -8,10 +8,15 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
+/**
+ * @Author 胡学汪
+ * @Description
+ * @Date 创建于 2021/10/11 13:57
+ */
 public final class ProxyServer {
 
     static final int LOCAL_PORT = Integer.parseInt(System.getProperty("localPort", "8080"));
-    static final String REMOTE_HOST = System.getProperty("remoteHost", "112.91.118.47");
+    static final String REMOTE_HOST = System.getProperty("remoteHost", "112.93.118.47");
     static final int REMOTE_PORT = Integer.parseInt(System.getProperty("remotePort", "8082"));
 
     public static void main(String[] args) throws Exception {

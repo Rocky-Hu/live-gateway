@@ -3,10 +3,13 @@ package com.live.gateway;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpRequestEncoder;
+import io.netty.handler.codec.http.*;
 
+/**
+ * @Author 胡学汪
+ * @Description
+ * @Date 创建于 2021/10/11 13:57
+ */
 public class ProxyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private final String remoteHost;
@@ -21,9 +24,8 @@ public class ProxyChannelInitializer extends ChannelInitializer<SocketChannel> {
     public void initChannel(SocketChannel ch) {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast(new HttpRequestDecoder());
-        pipeline.addLast(new HttpRequestEncoder());
-        pipeline.addLast(new HttpObjectAggregator(65536));
-        pipeline.addLast(new ProxyFrontendAuthHandler());
-        pipeline.addLast(new ProxyFrontendHandler(remoteHost, remotePort));
+        pipeline.addLast(new HttpObjectAggregator(1048576));
+        pipeline.addLast("proxyFrontendAuthHandler", new ProxyFrontendAuthHandler());
+        pipeline.addLast("proxyFrontendHandler", new ProxyFrontendHandler(remoteHost, remotePort));
     }
 }

@@ -3,6 +3,11 @@ package com.live.gateway;
 import io.netty.channel.*;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @Author 胡学汪
+ * @Description
+ * @Date 创建于 2021/10/11 13:57
+ */
 @Slf4j
 public class ProxyBackendHandler extends ChannelInboundHandlerAdapter {
 
@@ -25,6 +30,7 @@ public class ProxyBackendHandler extends ChannelInboundHandlerAdapter {
                 if (future.isSuccess()) {
                     ctx.channel().read();
                 } else {
+                    log.error("InboundChannel writeAndFlush failed: channel-> {}, cause-> {}",  inboundChannel, future.cause());
                     future.channel().close();
                 }
             }

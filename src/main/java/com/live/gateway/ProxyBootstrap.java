@@ -7,6 +7,11 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOption;
 
+/**
+ * @Author 胡学汪
+ * @Description
+ * @Date 创建于 2021/10/11 13:57
+ */
 public class ProxyBootstrap {
 
     public static ChannelFuture connect(ChannelHandlerContext ctx, Address address) {
