@@ -1,9 +1,11 @@
 package com.live.gateway;
 
+import com.live.gateway.config.ProxyConfig;
 import com.live.gateway.config.ProxyServerConfig;
 import com.live.gateway.config.RemotingClientConfig;
 import com.live.gateway.config.RemotingServerConfig;
 import com.live.gateway.initializer.ProxyChannelInitializer;
+import com.live.gateway.model.NetAddress;
 import com.live.gateway.util.PropertiesUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
@@ -45,13 +47,15 @@ public final class ProxyServer {
             configProperties = PropertiesUtil.loadResourceProperties("config.properties");
         }
 
-        final ProxyServerConfig proxyServerConfig = new ProxyServerConfig();
+        final ProxyServerConfig serverConfig = new ProxyServerConfig();
         final RemotingServerConfig remotingServerConfig = new RemotingServerConfig();
         final RemotingClientConfig remotingClientConfig = new RemotingClientConfig();
 
-        PropertiesUtil.properties2Config(configProperties, proxyServerConfig);
+        PropertiesUtil.properties2Config(configProperties, serverConfig);
         PropertiesUtil.properties2Config(configProperties, remotingServerConfig);
         PropertiesUtil.properties2Config(configProperties, remotingClientConfig);
+
+        ProxyConfig.init(serverConfig, remotingServerConfig, remotingClientConfig);
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -60,9 +64,9 @@ public final class ProxyServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.DEBUG))
-                    .childHandler(new ProxyChannelInitializer(remotingServerConfig.getHost(), remotingServerConfig.getPort()))
+                    .childHandler(new ProxyChannelInitializer(new NetAddress(remotingServerConfig.getHost(), remotingServerConfig.getPort())))
                     .childOption(ChannelOption.AUTO_READ, false)
-                    .bind(proxyServerConfig.getListenPort()).sync().channel().closeFuture().sync();
+                    .bind(serverConfig.getListenPort()).sync().channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

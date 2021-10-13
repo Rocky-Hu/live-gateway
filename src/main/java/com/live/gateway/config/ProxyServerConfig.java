@@ -11,6 +11,7 @@ import lombok.Data;
 public class ProxyServerConfig extends AbstractConfig {
 
     private int listenPort = 8888;
+    private boolean enableAuth = true;
 
     @Override
     public String getConfigPrefix() {

@@ -1,7 +1,7 @@
 package com.live.gateway.handler;
 
+import com.live.gateway.model.NetAddress;
 import com.live.gateway.remoting.RemotingClientBootstrap;
-import com.live.gateway.model.Address;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
@@ -15,22 +15,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProxyFrontendHandler extends ChannelInboundHandlerAdapter {
 
-    private final String remoteHost;
-    private final int remotePort;
+    private NetAddress remoteNetAddress;
 
     // As we use inboundChannel.eventLoop() when building the Bootstrap this does not need to be volatile as
     // the outboundChannel will use the same EventLoop (and therefore Thread) as the inboundChannel.
     private Channel outboundChannel;
 
-    public ProxyFrontendHandler(String remoteHost, int remotePort) {
-        this.remoteHost = remoteHost;
-        this.remotePort = remotePort;
+    public ProxyFrontendHandler(NetAddress remoteNetAddress) {
+        this.remoteNetAddress = remoteNetAddress;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         final Channel inboundChannel = ctx.channel();
-        ChannelFuture f = RemotingClientBootstrap.connect(ctx, new Address(remoteHost, remotePort));
+        ChannelFuture f = RemotingClientBootstrap.connect(ctx, remoteNetAddress);
         outboundChannel = f.channel();
         outboundChannel.pipeline().addLast(new HttpRequestEncoder());
         f.addListener(new ChannelFutureListener() {

@@ -1,5 +1,6 @@
 package com.live.gateway.handler;
 
+import com.live.gateway.config.ProxyConfig;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -25,18 +26,21 @@ public class ProxyFrontendAuthHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         log.debug("channelRead: channel-> {}, msg-> {}", ctx.channel(), msg);
         if (msg instanceof FullHttpRequest) {
-            FullHttpRequest httpRequest = (FullHttpRequest) msg;
-            HttpHeaders headers = httpRequest.headers();
-            String cookies = headers.get("Cookie");
-            log.debug("Client Request Cookies: {}", cookies);
-            if (StringUtils.isBlank(cookies)) {
-                log.warn("Auth failed, will close the inbound channel: {}", ctx.channel());
-                ctx.pipeline().addBefore("proxyFrontendAuthHandler", "httpResponseEncoder",  new HttpResponseEncoder());
-                FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_0, HttpResponseStatus.FORBIDDEN);
-                ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-            } else {
-                ctx.fireChannelRead(msg);
+            if (ProxyConfig.getInstance().getServerConfig().isEnableAuth()) {
+                FullHttpRequest httpRequest = (FullHttpRequest) msg;
+                HttpHeaders headers = httpRequest.headers();
+                String cookies = headers.get("Cookie");
+                log.debug("Client Request Cookies: {}", cookies);
+                if (StringUtils.isBlank(cookies)) {
+                    log.warn("Auth failed, will close the inbound channel: {}", ctx.channel());
+                    ctx.pipeline().addBefore("proxyFrontendAuthHandler", "httpResponseEncoder", new HttpResponseEncoder());
+                    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_0, HttpResponseStatus.FORBIDDEN);
+                    ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+                    return;
+                }
             }
+
+            ctx.fireChannelRead(msg);
         }
     }
 
