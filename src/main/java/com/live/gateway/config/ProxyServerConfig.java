@@ -12,6 +12,7 @@ public class ProxyServerConfig extends AbstractConfig {
 
     private int listenPort = 8888;
     private boolean enableAuth = true;
+    private String filteredUri;
 
     @Override
     public String getConfigPrefix() {

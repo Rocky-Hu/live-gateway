@@ -2,6 +2,7 @@ package com.live.gateway.initializer;
 
 import com.live.gateway.handler.ProxyFrontendAuthHandler;
 import com.live.gateway.handler.ProxyFrontendHandler;
+import com.live.gateway.handler.ProxyFrontendTransformHandler;
 import com.live.gateway.model.NetAddress;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -27,6 +28,7 @@ public class ProxyChannelInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new HttpRequestDecoder());
         pipeline.addLast(new HttpObjectAggregator(1048576));
         pipeline.addLast("proxyFrontendAuthHandler", new ProxyFrontendAuthHandler());
+        pipeline.addLast("proxyFrontendTransformHandler", new ProxyFrontendTransformHandler());
         pipeline.addLast("proxyFrontendHandler", new ProxyFrontendHandler(remoteNetAddress));
     }
 }

@@ -12,6 +12,9 @@ public class RemotingServerConfig extends AbstractConfig {
 
     private String host;
     private int port;
+    private String appName;
+    private String apiKey;
+    private String uri;
 
     @Override
     public String getConfigPrefix() {
